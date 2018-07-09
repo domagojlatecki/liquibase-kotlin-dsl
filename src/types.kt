@@ -21,3 +21,7 @@ object integer : ColumnType {
 object uuid : ColumnType {
     override val name: String = "uuid"
 }
+
+object text : ColumnType {
+    override val name: String = "text"
+}

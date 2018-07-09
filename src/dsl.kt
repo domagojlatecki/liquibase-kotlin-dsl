@@ -70,7 +70,7 @@ class IndexOnTableInSchemaDefinition(private val indexName: String,
         println("        - createIndex:")
         println("            schemaName: $schemaName")
         println("            tableName: $tableName")
-        println("            indexName: $indexName")
+        println("            indexName: idx_${tableName}_$indexName")
         println("            unique: ${context.unique}")
         println("            columns:")
 
@@ -91,10 +91,20 @@ object create {
     infix fun index(name: String) = IndexDefinition(name)
 }
 
+class ForeignKeyConstraint {
+
+    var value: String? = null
+
+    infix fun on(value: String) {
+        this.value = value
+    }
+}
+
 class Constraints {
     var unique: Boolean? = null
     var nullable: Boolean? = null
     var primaryKey: Boolean? = null
+    val foreignKey: ForeignKeyConstraint = ForeignKeyConstraint()
 }
 
 class TypedColumnDefinition(private val tableName: String,
@@ -121,6 +131,13 @@ class TypedColumnDefinition(private val tableName: String,
         if (constraints.primaryKey == true) {
             println("                    primaryKey: true")
             println("                    primaryKeyName: pk_$tableName")
+        }
+
+        if (constraints.foreignKey.value != null) {
+            val updatedName = constraints.foreignKey.value!!.replace('(', '_').replace(')', ' ').trim()
+
+            println("                    references: ${constraints.foreignKey.value}")
+            println("                    foreignKeyName: fk_${tableName}_$updatedName")
         }
     }
 }
